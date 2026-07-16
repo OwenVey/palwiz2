@@ -6,7 +6,17 @@ import viteReact from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 const config = defineConfig({
-  plugins: [devtools(), cloudflare({ viteEnvironment: { name: 'ssr' } }), tailwindcss(), tanstackStart(), viteReact()],
+  plugins: [
+    devtools(),
+    cloudflare({ viteEnvironment: { name: 'ssr' } }),
+    tailwindcss(),
+    tanstackStart({
+      prerender: {
+        enabled: true,
+      },
+    }),
+    viteReact(),
+  ],
   resolve: { tsconfigPaths: true },
 });
 

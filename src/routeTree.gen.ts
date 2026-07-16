@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PalsIndexRouteImport } from './routes/pals/index'
+import { Route as PalsPalIdRouteImport } from './routes/pals/$palId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PalsIndexRoute = PalsIndexRouteImport.update({
+  id: '/pals/',
+  path: '/pals/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PalsPalIdRoute = PalsPalIdRouteImport.update({
+  id: '/pals/$palId',
+  path: '/pals/$palId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pals/$palId': typeof PalsPalIdRoute
+  '/pals/': typeof PalsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pals/$palId': typeof PalsPalIdRoute
+  '/pals': typeof PalsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/pals/$palId': typeof PalsPalIdRoute
+  '/pals/': typeof PalsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/pals/$palId' | '/pals/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/pals/$palId' | '/pals'
+  id: '__root__' | '/' | '/pals/$palId' | '/pals/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PalsPalIdRoute: typeof PalsPalIdRoute
+  PalsIndexRoute: typeof PalsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pals/': {
+      id: '/pals/'
+      path: '/pals'
+      fullPath: '/pals/'
+      preLoaderRoute: typeof PalsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pals/$palId': {
+      id: '/pals/$palId'
+      path: '/pals/$palId'
+      fullPath: '/pals/$palId'
+      preLoaderRoute: typeof PalsPalIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PalsPalIdRoute: PalsPalIdRoute,
+  PalsIndexRoute: PalsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

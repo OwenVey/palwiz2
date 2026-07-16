@@ -21,7 +21,7 @@ export const Route = createRootRoute({
         name: 'viewport',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Palwiz',
       },
     ],
   }),

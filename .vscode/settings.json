@@ -1,13 +1,30 @@
 {
+  // tailwind
+  "tailwindCSS.classFunctions": ["cva", "cn"],
+  "tailwindCSS.includeLanguages": {
+    "plaintext": "html"
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.wordWrap": "on",
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+
+  // tanstack
   "files.watcherExclude": {
     "**/routeTree.gen.ts": true
   },
   "search.exclude": {
-    "**/routeTree.gen.ts": true
+    "**/routeTree.gen.ts": true,
+    "**/pnpm-lock.yaml": true
   },
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true
   },
+
+  // ultracite
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,

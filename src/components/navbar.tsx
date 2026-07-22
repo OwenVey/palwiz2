@@ -39,7 +39,9 @@ export function Navbar() {
             <Button
               aria-expanded={mobileMenuOpen}
               className="text-muted-foreground"
-              onClick={() => setMobileMenuOpen((open) => !open)}
+              onClick={() => {
+                setMobileMenuOpen((open) => !open);
+              }}
               size="icon"
               type="button"
               variant="ghost"

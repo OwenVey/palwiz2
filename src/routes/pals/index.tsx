@@ -28,7 +28,7 @@ function RouteComponent() {
               </Badge>
 
               <div className="flex mt-2 flex-col gap-1">
-                {pal.elementType1 && (
+                {pal?.elementType1 && (
                   <img src={`/images/elements/${pal.elementType1}.png`} className="size-6" alt={pal.elementType1} />
                 )}
                 {pal.elementType2 && (

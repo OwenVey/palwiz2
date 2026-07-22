@@ -6,8 +6,13 @@ import tanstack from 'ultracite/oxlint/tanstack';
 export default defineConfig({
   extends: [core, react, tanstack],
   ignorePatterns: core.ignorePatterns,
+  options: {
+    typeAware: true,
+    typeCheck: true,
+  },
   rules: {
     'func-style': 'off',
     'no-use-before-define': 'off',
+    'typescript/strict-boolean-expressions': 'off',
   },
 });

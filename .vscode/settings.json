@@ -1,6 +1,6 @@
 {
   // tailwind
-  "tailwindCSS.classFunctions": ["cva", "cn"],
+  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "class:list", "activeProps"],
   "tailwindCSS.includeLanguages": {
     "plaintext": "html"
   },

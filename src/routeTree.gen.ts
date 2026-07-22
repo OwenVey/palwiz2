@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ItemsRouteImport } from './routes/items'
 import { Route as PalsIndexRouteImport } from './routes/pals/index'
 import { Route as PalsPalIdRouteImport } from './routes/pals/$palId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ItemsRoute = ItemsRouteImport.update({
+  id: '/items',
+  path: '/items',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PalsIndexRoute = PalsIndexRouteImport.update({
@@ -31,30 +37,34 @@ const PalsPalIdRoute = PalsPalIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/items': typeof ItemsRoute
   '/pals/$palId': typeof PalsPalIdRoute
   '/pals/': typeof PalsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/items': typeof ItemsRoute
   '/pals/$palId': typeof PalsPalIdRoute
   '/pals': typeof PalsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/items': typeof ItemsRoute
   '/pals/$palId': typeof PalsPalIdRoute
   '/pals/': typeof PalsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/pals/$palId' | '/pals/'
+  fullPaths: '/' | '/items' | '/pals/$palId' | '/pals/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/pals/$palId' | '/pals'
-  id: '__root__' | '/' | '/pals/$palId' | '/pals/'
+  to: '/' | '/items' | '/pals/$palId' | '/pals'
+  id: '__root__' | '/' | '/items' | '/pals/$palId' | '/pals/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ItemsRoute: typeof ItemsRoute
   PalsPalIdRoute: typeof PalsPalIdRoute
   PalsIndexRoute: typeof PalsIndexRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/items': {
+      id: '/items'
+      path: '/items'
+      fullPath: '/items'
+      preLoaderRoute: typeof ItemsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pals/': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ItemsRoute: ItemsRoute,
   PalsPalIdRoute: PalsPalIdRoute,
   PalsIndexRoute: PalsIndexRoute,
 }

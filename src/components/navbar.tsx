@@ -1,17 +1,11 @@
 import { Link } from '@tanstack/react-router';
-import type { LinkProps } from '@tanstack/react-router';
-import { CatIcon, MenuIcon, PencilRulerIcon, XIcon } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import { MenuIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { NAV_ITEMS } from '@/constants';
 
 import { Logo } from './logo';
-
-const navigationItems = [
-  { icon: CatIcon, label: 'Pals', to: '/pals' },
-  { icon: PencilRulerIcon, label: 'Items', to: '/items' },
-] satisfies { to: LinkProps['to']; label: string; icon?: LucideIcon }[];
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -28,7 +22,7 @@ export function Navbar() {
 
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
-                {navigationItems.map(({ label, to, icon: Icon }) => (
+                {NAV_ITEMS.map(({ label, to, icon: Icon }) => (
                   <Link
                     className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground data-[status=active]:bg-primary data-[status=active]:text-primary-foreground"
                     key={label}
@@ -64,7 +58,7 @@ export function Navbar() {
       {mobileMenuOpen ? (
         <div className="sm:hidden">
           <div className="space-y-1 px-2 py-3">
-            {navigationItems.map(({ label, to }) => (
+            {NAV_ITEMS.map(({ label, to }) => (
               <Link
                 className="block rounded-md px-3 py-2 text-base font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground data-[status=active]:bg-primary data-[status=active]:text-primary-foreground"
                 key={label}
@@ -79,5 +73,3 @@ export function Navbar() {
     </nav>
   );
 }
-
-export default Navbar;

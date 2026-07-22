@@ -18,10 +18,10 @@ function RouteComponent() {
             key={pal.id}
             to="/pals/$palId"
             params={{ palId: pal.id }}
-            className="p-4 relative border rounded grid place-items-center bg-card"
+            className="rounded-lg border bg-card text-card-foreground shadow-sm relative grid place-items-center p-2"
           >
-            <div className="absolute top-2 left-2 ">
-              <Badge className="gap-0 font-mono items-baseline h-fit font-normal" variant="outline">
+            <div className="absolute top-2 left-2">
+              <Badge className="block gap-0 font-mono items-baseline h-fit font-normal" variant="outline">
                 <span className="opacity-30">#{'000'.slice(pal.zukanIndex.toString().length)}</span>
                 <span>{pal.zukanIndex}</span>
                 <span className="text-[10px]">{pal.zukanIndexSuffix}</span>
@@ -49,14 +49,16 @@ function RouteComponent() {
                 ))}
             </div>
 
-            <img
-              src={`/images/pals/${pal.id}.webp`}
-              alt={pal.name}
-              loading="lazy"
-              className="mb-4 size-20 rounded-full object-cover"
-            />
+            <div className="flex flex-col py-2 gap-2 items-center">
+              <img
+                src={`/images/pals/${pal.id}.webp`}
+                alt={pal.name}
+                loading="lazy"
+                className="size-24 bg-background border rounded-full object-cover"
+              />
 
-            <div className="font-medium">{pal.name}</div>
+              <div className="font-medium">{pal.name}</div>
+            </div>
           </Link>
         ))}
       </div>

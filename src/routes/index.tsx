@@ -17,7 +17,7 @@ function App() {
       <nav aria-label="Explore Palwiz" className="mt-10 grid gap-4 sm:grid-cols-2">
         {NAV_ITEMS.map(({ icon: Icon, label, to }) => (
           <Link
-            className="group flex min-h-44 flex-col rounded-2xl border bg-card p-6 text-card-foreground shadow-sm transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="group flex min-h-44 flex-col rounded-2xl border bg-card p-6 text-card-foreground shadow-sm transition-all hover:-translate-y-px hover:border-primary/40 hover:shadow-lg focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
             key={label}
             to={to}
           >
@@ -30,7 +30,7 @@ function App() {
               <span className="text-xl font-semibold">{label}</span>
               <ArrowRightIcon
                 aria-hidden="true"
-                className="size-5 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary"
+                className="size-5 text-muted-foreground transition-transform group-hover:translate-x-px group-hover:text-primary"
               />
             </span>
           </Link>

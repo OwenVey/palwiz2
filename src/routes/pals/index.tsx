@@ -18,7 +18,7 @@ function RouteComponent() {
             key={pal.id}
             to="/pals/$palId"
             params={{ palId: pal.id }}
-            className="rounded-lg border bg-card text-card-foreground shadow-sm relative grid place-items-center p-2"
+            className="rounded-lg border bg-card text-card-foreground shadow-sm relative grid place-items-center p-2 hover:-translate-y-0.5 transition-all hover:border-primary hover:shadow hover:shadow-primary"
           >
             <div className="absolute top-2 left-2">
               <Badge className="block gap-0 font-mono items-baseline h-fit font-normal" variant="outline">

@@ -45,6 +45,7 @@ function RouteComponent() {
           <InputGroup>
             <InputGroupInput
               id="pal-search"
+              autoFocus
               value={search}
               onChange={(event) => {
                 const nextSearch = event.target.value;

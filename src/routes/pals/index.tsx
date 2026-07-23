@@ -1,82 +1,110 @@
 import { createFileRoute, Link, retainSearchParams, stripSearchParams } from '@tanstack/react-router';
-import { Grid3x3Icon, Table2Icon } from 'lucide-react';
+import { Grid3x3Icon, SearchIcon, Table2Icon } from 'lucide-react';
 import * as v from 'valibot';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { columns } from '@/components/pals-table/columns';
 import { Badge } from '@/components/ui/badge';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import pals from '@/data/pals.json';
 
 const ViewSearchSchema = v.object({
+  search: v.optional(v.fallback(v.string(), ''), ''),
   view: v.optional(v.fallback(v.picklist(['grid', 'table']), 'grid'), 'grid'),
 });
 
-const defaultSearchValues = { view: 'grid' } as const;
+const defaultSearchValues = { search: '', view: 'grid' } as const;
 
 export const Route = createFileRoute('/pals/')({
   validateSearch: ViewSearchSchema,
   search: {
-    middlewares: [retainSearchParams(['view']), stripSearchParams(defaultSearchValues)],
+    middlewares: [retainSearchParams(['search', 'view']), stripSearchParams(defaultSearchValues)],
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { view } = Route.useSearch();
+  const { search, view } = Route.useSearch();
   const navigate = Route.useNavigate();
+  const normalizedSearch = search.trim().toLowerCase();
+  const filteredPals = normalizedSearch
+    ? pals.filter((pal) => pal.name.toLowerCase().includes(normalizedSearch))
+    : pals;
+  const palCount = normalizedSearch ? `${filteredPals.length}/${pals.length} pals` : `${pals.length} pals`;
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center justify-between gap-4 rounded-lg border bg-card px-4 py-3">
-        <div>
-          <h1 className="font-heading text-lg font-semibold">Pals</h1>
-          <p className="text-sm text-muted-foreground">{pals.length} pals</p>
+      <div className="flex flex-col gap-3 rounded-lg border bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
+        <Field className="w-full sm:w-80">
+          <FieldLabel className="sr-only" htmlFor="pal-search">
+            Search pals by name
+          </FieldLabel>
+          <InputGroup>
+            <InputGroupInput
+              id="pal-search"
+              value={search}
+              onChange={(event) => {
+                const nextSearch = event.target.value;
+                void navigate({
+                  search: (previous) => ({ ...previous, search: nextSearch }),
+                });
+              }}
+              placeholder="Search pals"
+            />
+            <InputGroupAddon>
+              <SearchIcon aria-hidden="true" />
+            </InputGroupAddon>
+            <InputGroupAddon align="inline-end">{palCount}</InputGroupAddon>
+          </InputGroup>
+        </Field>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <ToggleGroup
+            value={[view]}
+            onValueChange={([newView]) => {
+              if (newView === 'grid' || newView === 'table') {
+                void navigate({
+                  search: (previous) => ({ ...previous, view: newView }),
+                });
+              }
+            }}
+            variant="outline"
+            size="sm"
+            aria-label="Choose a Pals view"
+          >
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <ToggleGroupItem value="grid" aria-label="Grid view">
+                    <Grid3x3Icon />
+                  </ToggleGroupItem>
+                }
+              />
+              <TooltipContent>Grid View</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <ToggleGroupItem value="table" aria-label="Table view">
+                    <Table2Icon />
+                  </ToggleGroupItem>
+                }
+              />
+              <TooltipContent>Table View</TooltipContent>
+            </Tooltip>
+          </ToggleGroup>
         </div>
-
-        <ToggleGroup
-          value={[view]}
-          onValueChange={([newView]) => {
-            if (newView === 'grid' || newView === 'table') {
-              void navigate({
-                search: { view: newView },
-              });
-            }
-          }}
-          variant="outline"
-          size="sm"
-          aria-label="Choose a Pals view"
-        >
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <ToggleGroupItem value="grid" aria-label="Grid view">
-                  <Grid3x3Icon />
-                </ToggleGroupItem>
-              }
-            />
-            <TooltipContent>Grid View</TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <ToggleGroupItem value="table" aria-label="Table view">
-                  <Table2Icon />
-                </ToggleGroupItem>
-              }
-            />
-            <TooltipContent>Table View</TooltipContent>
-          </Tooltip>
-        </ToggleGroup>
       </div>
 
       {view === 'table' ? (
-        <DataTable className="mt-4" columns={columns} data={pals} />
+        <DataTable className="mt-4" columns={columns} data={filteredPals} />
       ) : (
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {pals.map((pal) => (
+          {filteredPals.map((pal) => (
             <Link
               key={pal.id}
               to="/pals/$palId"

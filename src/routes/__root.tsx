@@ -3,6 +3,7 @@ import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
 import { Navbar } from '@/components/navbar';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 import appCss from '../styles.css?url';
 
@@ -38,7 +39,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Navbar />
-        <main className="mx-auto max-w-7xl sm:px-8 p-4">{children}</main>
+        <main className="mx-auto max-w-7xl sm:px-8 p-4">
+          <TooltipProvider>{children}</TooltipProvider>
+        </main>
         <TanStackDevtools
           config={{
             position: 'bottom-right',

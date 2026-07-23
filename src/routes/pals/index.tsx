@@ -1,11 +1,12 @@
 import { createFileRoute, Link, retainSearchParams, stripSearchParams } from '@tanstack/react-router';
-import { Grid2X2, Table2 } from 'lucide-react';
+import { Grid3x3Icon, Table2Icon } from 'lucide-react';
 import * as v from 'valibot';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { columns } from '@/components/pals-table/columns';
 import { Badge } from '@/components/ui/badge';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import pals from '@/data/pals.json';
 
 const ViewSearchSchema = v.object({
@@ -47,14 +48,27 @@ function RouteComponent() {
           size="sm"
           aria-label="Choose a Pals view"
         >
-          <ToggleGroupItem value="grid" aria-label="Grid view">
-            <Grid2X2 />
-            <span className="sr-only">Grid</span>
-          </ToggleGroupItem>
-          <ToggleGroupItem value="table" aria-label="Table view">
-            <Table2 />
-            <span className="sr-only">Table</span>
-          </ToggleGroupItem>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <ToggleGroupItem value="grid" aria-label="Grid view">
+                  <Grid3x3Icon />
+                </ToggleGroupItem>
+              }
+            />
+            <TooltipContent>Grid View</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <ToggleGroupItem value="table" aria-label="Table view">
+                  <Table2Icon />
+                </ToggleGroupItem>
+              }
+            />
+            <TooltipContent>Table View</TooltipContent>
+          </Tooltip>
         </ToggleGroup>
       </div>
 

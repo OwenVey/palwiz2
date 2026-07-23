@@ -2,11 +2,46 @@ import { createColumnHelper } from '@tanstack/react-table';
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
+import pals from '@/data/pals.json';
 import type { Pal } from '@/types';
 
 const columnHelper = createColumnHelper<Pal>();
 
+type NumericPalKey =
+  | 'foodAmount'
+  | 'captureRateCorrect'
+  | 'price'
+  | 'hp'
+  | 'defense'
+  | 'meleeAttack'
+  | 'shotAttack'
+  | 'support'
+  | 'walkSpeed'
+  | 'runSpeed'
+  | 'rideSprintSpeed'
+  | 'stamina';
+
+function getStatClass(value: number, max: number) {
+  if (value === 0) {
+    return 'text-muted-foreground/50';
+  }
+
+  const ratio = value / max;
+
+  if (ratio >= 0.75) {
+    return 'font-semibold text-emerald-600 dark:text-emerald-400';
+  }
+
+  if (ratio >= 0.5) {
+    return 'font-medium text-amber-600 dark:text-amber-400';
+  }
+
+  return 'text-foreground';
+}
+
 function workSuitabilityColumn(key: keyof Pal['workSuitabilities'], title: string) {
+  const max = Math.max(...pals.map((pal) => pal.workSuitabilities[key]));
+
   return columnHelper.accessor((pal) => pal.workSuitabilities[key], {
     id: key,
     header: ({ column }) => (
@@ -15,7 +50,25 @@ function workSuitabilityColumn(key: keyof Pal['workSuitabilities'], title: strin
         title={<img src={`/images/work/${key}.png`} alt={title} title={title} className="size-6" />}
       />
     ),
-    cell: (props) => <span className="font-mono">{props.getValue()}</span>,
+    cell: (props) => {
+      const value = props.getValue();
+      const displayValue = value === 0 ? '—' : value;
+
+      return <span className={`font-mono ${getStatClass(value, max)}`}>{displayValue}</span>;
+    },
+  });
+}
+
+function numericColumn(key: NumericPalKey, title: string) {
+  const max = Math.max(...pals.map((pal) => pal[key]));
+
+  return columnHelper.accessor(key, {
+    header: ({ column }) => <DataTableColumnHeader column={column} title={title} />,
+    cell: (props) => {
+      const value = props.getValue();
+
+      return <span className={`font-mono ${getStatClass(value, max)}`}>{value}</span>;
+    },
   });
 }
 
@@ -26,7 +79,12 @@ export const columns = [
     columns: [
       columnHelper.accessor('zukanIndex', {
         header: ({ column }) => <DataTableColumnHeader column={column} title="#" />,
-        cell: (props) => <span className="font-mono">#{props.getValue()}</span>,
+        cell: (props) => (
+          <span className="font-mono">
+            <span className="opacity-30">#</span>
+            {props.getValue()}
+          </span>
+        ),
       }),
       columnHelper.accessor('name', {
         header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
@@ -93,54 +151,30 @@ export const columns = [
     id: 'economy',
     header: 'Economy',
     columns: [
-      columnHelper.accessor('foodAmount', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Food" />,
-      }),
-      columnHelper.accessor('captureRateCorrect', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Capture Rate" />,
-      }),
-      columnHelper.accessor('price', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Sell Price" />,
-      }),
+      numericColumn('foodAmount', 'Food'),
+      numericColumn('captureRateCorrect', 'Capture Rate'),
+      numericColumn('price', 'Sell Price'),
     ],
   }),
   columnHelper.group({
     id: 'combat',
     header: 'Combat',
     columns: [
-      columnHelper.accessor('hp', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="HP" />,
-      }),
-      columnHelper.accessor('defense', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Defense" />,
-      }),
-      columnHelper.accessor('meleeAttack', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Melee" />,
-      }),
-      columnHelper.accessor('shotAttack', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Ranged" />,
-      }),
-      columnHelper.accessor('support', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Support" />,
-      }),
+      numericColumn('hp', 'HP'),
+      numericColumn('defense', 'Defense'),
+      numericColumn('meleeAttack', 'Melee'),
+      numericColumn('shotAttack', 'Ranged'),
+      numericColumn('support', 'Support'),
     ],
   }),
   columnHelper.group({
     id: 'mobility',
     header: 'Mobility',
     columns: [
-      columnHelper.accessor('walkSpeed', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Walk" />,
-      }),
-      columnHelper.accessor('runSpeed', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Run" />,
-      }),
-      columnHelper.accessor('rideSprintSpeed', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Ride Sprint" />,
-      }),
-      columnHelper.accessor('stamina', {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Stamina" />,
-      }),
+      numericColumn('walkSpeed', 'Walk'),
+      numericColumn('runSpeed', 'Run'),
+      numericColumn('rideSprintSpeed', 'Ride Sprint'),
+      numericColumn('stamina', 'Stamina'),
     ],
   }),
 ] satisfies ColumnDef<Pal>[];

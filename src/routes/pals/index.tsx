@@ -1,4 +1,5 @@
 import { createFileRoute, Link, retainSearchParams, stripSearchParams } from '@tanstack/react-router';
+import type { SortingState } from '@tanstack/react-table';
 import { Grid3x3Icon, SearchIcon, Table2Icon } from 'lucide-react';
 import * as v from 'valibot';
 
@@ -11,24 +12,49 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import pals from '@/data/pals.json';
 
+const pageSizes = [10, 20, 50, 100] as const;
+
 const ViewSearchSchema = v.object({
   search: v.optional(v.fallback(v.string(), ''), ''),
   view: v.optional(v.fallback(v.picklist(['grid', 'table']), 'grid'), 'grid'),
+  page: v.optional(v.fallback(v.pipe(v.number(), v.integer(), v.minValue(1)), 1), 1),
+  pageSize: v.optional(v.fallback(v.picklist(pageSizes), 10), 10),
+  sort: v.optional(v.fallback(v.string(), ''), ''),
 });
 
-const defaultSearchValues = { search: '', view: 'grid' } as const;
+const DEFAULT_SEARCH = { page: 1, pageSize: 10, search: '', sort: '', view: 'grid' } as const;
+
+function parseSorting(value: string): SortingState {
+  return value
+    .split(',')
+    .map((entry) => {
+      const [id, direction] = entry.split('.');
+      return id && (direction === 'asc' || direction === 'desc') ? { id, desc: direction === 'desc' } : null;
+    })
+    .filter((sorting): sorting is SortingState[number] => sorting !== null);
+}
+
+function serializeSorting(sorting: SortingState): string {
+  return sorting.map(({ id, desc }) => `${id}.${desc ? 'desc' : 'asc'}`).join(',');
+}
+
+function isPageSize(value: number): value is (typeof pageSizes)[number] {
+  return value === 10 || value === 20 || value === 50 || value === 100;
+}
 
 export const Route = createFileRoute('/pals/')({
   validateSearch: ViewSearchSchema,
   search: {
-    middlewares: [retainSearchParams(['search', 'view']), stripSearchParams(defaultSearchValues)],
+    middlewares: [retainSearchParams(['search', 'view']), stripSearchParams(DEFAULT_SEARCH)],
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { search, view } = Route.useSearch();
+  const { page, pageSize, search, sort, view } = Route.useSearch();
   const navigate = Route.useNavigate();
+  const sorting = parseSorting(sort);
+  const pagination = { pageIndex: page - 1, pageSize };
   const normalizedSearch = search.trim().toLowerCase();
   const filteredPals = normalizedSearch
     ? pals.filter((pal) => pal.name.toLowerCase().includes(normalizedSearch))
@@ -50,7 +76,7 @@ function RouteComponent() {
               onChange={(event) => {
                 const nextSearch = event.target.value;
                 void navigate({
-                  search: (previous) => ({ ...previous, search: nextSearch }),
+                  search: { page: 1, search: nextSearch },
                 });
               }}
               placeholder="Search pals"
@@ -102,7 +128,37 @@ function RouteComponent() {
       </div>
 
       {view === 'table' ? (
-        <DataTable className="mt-4" columns={columns} data={filteredPals} />
+        <DataTable
+          className="mt-4"
+          columns={columns}
+          data={filteredPals}
+          pagination={pagination}
+          sorting={sorting}
+          onPaginationChange={(updater) => {
+            void navigate({
+              search: (previous) => {
+                const nextPagination = typeof updater === 'function' ? updater(pagination) : updater;
+                const nextPageSize = isPageSize(nextPagination.pageSize) ? nextPagination.pageSize : pageSize;
+                const pageSizeChanged = nextPageSize !== pageSize;
+
+                return {
+                  ...previous,
+                  page: pageSizeChanged ? 1 : nextPagination.pageIndex + 1,
+                  pageSize: nextPageSize,
+                };
+              },
+            });
+          }}
+          onSortingChange={(updater) => {
+            void navigate({
+              search: (previous) => {
+                const nextSorting = typeof updater === 'function' ? updater(sorting) : updater;
+
+                return { ...previous, page: 1, sort: serializeSorting(nextSorting) };
+              },
+            });
+          }}
+        />
       ) : (
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredPals.map((pal) => (

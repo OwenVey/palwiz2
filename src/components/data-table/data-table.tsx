@@ -1,4 +1,4 @@
-import type { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table';
+import type { ColumnDef, OnChangeFn, PaginationState, SortingState } from '@tanstack/react-table';
 import {
   flexRender,
   getCoreRowModel,
@@ -6,7 +6,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import React from 'react';
 import type { ComponentProps } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -16,24 +15,29 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 interface DataTableProps<TData, TValue> extends ComponentProps<'div'> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  pagination: PaginationState;
+  sorting: SortingState;
+  onPaginationChange: OnChangeFn<PaginationState>;
+  onSortingChange: OnChangeFn<SortingState>;
 }
 
 // oxlint-disable-next-line react/react-compiler
-export function DataTable<TData, TValue>({ columns, data, ...rest }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  pagination,
+  sorting,
+  onPaginationChange,
+  onSortingChange,
+  ...rest
+}: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
-    onPaginationChange: setPagination,
+    onPaginationChange,
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
+    onSortingChange,
     getSortedRowModel: getSortedRowModel(),
     state: {
       sorting,

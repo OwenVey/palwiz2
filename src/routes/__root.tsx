@@ -38,7 +38,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Navbar />
-        {children}
+        <main className="mx-auto max-w-7xl sm:px-8 p-4">{children}</main>
         <TanStackDevtools
           config={{
             position: 'bottom-right',

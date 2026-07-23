@@ -133,4 +133,7 @@
   html {
     @apply font-sans;
   }
+  html.dark {
+    color-scheme: dark;
+  }
 }

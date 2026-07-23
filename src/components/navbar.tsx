@@ -11,7 +11,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="relative border-b bg-card">
+    <nav className="border-b bg-card sticky top-0 z-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
@@ -27,6 +27,7 @@ export function Navbar() {
                     className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground data-[status=active]:bg-primary data-[status=active]:text-primary-foreground"
                     key={label}
                     to={to}
+                    activeOptions={{ includeSearch: false }}
                   >
                     {Icon && <Icon className="size-5" />}
                     {label}

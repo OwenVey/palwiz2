@@ -12,7 +12,10 @@ export default defineConfig({
   },
   rules: {
     'func-style': 'off',
+    'no-nested-ternary': 'off',
     'no-use-before-define': 'off',
+    'sort-keys': 'off',
     'typescript/strict-boolean-expressions': 'off',
+    'unicorn/no-nested-ternary': 'off',
   },
 });

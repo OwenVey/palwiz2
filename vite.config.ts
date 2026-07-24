@@ -12,9 +12,7 @@ const config = defineConfig({
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
     tailwindcss(),
     tanstackStart({
-      prerender: {
-        enabled: true,
-      },
+      prerender: { enabled: false },
     }),
     viteReact(),
     babel({

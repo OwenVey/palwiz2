@@ -6,6 +6,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { ComponentProps } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -39,6 +40,8 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange,
     getSortedRowModel: getSortedRowModel(),
+    sortDescFirst: false,
+    enableSortingRemoval: true,
     state: {
       sorting,
       pagination,
@@ -55,6 +58,7 @@ export function DataTable<TData, TValue>({
       .filter((columnId): columnId is string => columnId !== undefined)
   );
   const currentPageSize = table.getState().pagination.pageSize;
+  const sortingKey = sorting.map(({ id, desc }) => `${id}:${desc}`).join(',');
   const rowCount = data.length;
   const firstRow = rowCount === 0 ? 0 : table.getState().pagination.pageIndex * currentPageSize + 1;
   const lastRow =
@@ -76,7 +80,7 @@ export function DataTable<TData, TValue>({
 
                   return (
                     <TableHead
-                      key={header.id}
+                      key={`${header.id}-${sortingKey}`}
                       colSpan={header.colSpan}
                       className={`${
                         header.subHeaders.length
@@ -148,6 +152,7 @@ export function DataTable<TData, TValue>({
               }}
               disabled={!table.getCanPreviousPage()}
             >
+              <ArrowLeft aria-hidden="true" />
               Previous
             </Button>
             <Button
@@ -159,6 +164,7 @@ export function DataTable<TData, TValue>({
               disabled={!table.getCanNextPage()}
             >
               Next
+              <ArrowRight aria-hidden="true" />
             </Button>
           </div>
         </div>

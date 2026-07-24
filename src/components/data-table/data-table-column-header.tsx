@@ -1,15 +1,8 @@
 import type { Column } from '@tanstack/react-table';
-import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 
 interface DataTableColumnHeaderProps<TData, TValue> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
@@ -26,51 +19,28 @@ export function DataTableColumnHeader<TData, TValue>({
     return <div className={cn(className)}>{title}</div>;
   }
 
+  const sorted = column.getIsSorted();
+
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button variant="ghost" size="sm" className="-ml-3 h-8 data-[state=open]:bg-accent">
-              <span>{title}</span>
-              {column.getIsSorted() === 'desc' ? (
-                <ArrowDown />
-              ) : column.getIsSorted() === 'asc' ? (
-                <ArrowUp />
-              ) : (
-                <ChevronsUpDown />
-              )}
-            </Button>
-          }
-        />
-        <DropdownMenuContent align="start">
-          <DropdownMenuItem
-            onClick={() => {
-              column.toggleSorting(false);
-            }}
-          >
-            <ArrowUp />
-            Asc
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              column.toggleSorting(true);
-            }}
-          >
-            <ArrowDown />
-            Desc
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              column.toggleVisibility(false);
-            }}
-          >
-            <EyeOff />
-            Hide
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="-ml-3 h-8 px-1 gap-0.5"
+        aria-label={typeof title === 'string' ? `Sort ${title}` : 'Sort column'}
+        onClick={() => {
+          column.toggleSorting();
+        }}
+      >
+        <span className={sorted === false ? '' : 'text-primary-foreground'}>{title}</span>
+        {sorted === 'desc' ? (
+          <ArrowDown className="text-foreground" />
+        ) : sorted === 'asc' ? (
+          <ArrowUp className="text-foreground" />
+        ) : (
+          <ChevronsUpDown className="text-muted-foreground/50" />
+        )}
+      </Button>
     </div>
   );
 }
